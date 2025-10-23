@@ -1,0 +1,68 @@
+services:
+  pgvector:
+    image: ankane/pgvector:latest
+    container_name: pgvector
+    environment:
+      POSTGRES_USER: ma
+      POSTGRES_PASSWORD: ma_pw
+      POSTGRES_DB: ma_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    container_name: redis
+
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    volumes:
+      - ollama:/root/.ollama
+    environment:
+      OLLAMA_KEEP_ALIVE: 24h
+    entrypoint: ["/bin/sh","-lc","ollama serve & sleep 3 && ollama pull llama3.1:8b && wait"]
+
+  api:
+    image: ghcr.io/yourorg/ma-api:latest  # TODO: replace with your image
+    container_name: ma-api
+    depends_on: [pgvector, redis, ollama]
+    environment:
+      DB_URL: postgresql://ma:ma_pw@pgvector:5432/ma_db
+      REDIS_URL: redis://redis:6379/0
+      OLLAMA_BASE_URL: http://ollama:11434
+      MA_ADMIN_TOKEN_FILE: /run/secrets/admin_token
+      GITHUB_TOKEN_FILE: /run/secrets/github_token
+    secrets:
+      - admin_token
+      - github_token
+    command: ["uvicorn","ma.api.app:app","--host","0.0.0.0","--port","8502"]
+
+  worker:
+    image: ghcr.io/yourorg/ma-api:latest  # TODO: replace with your image
+    container_name: ma-worker
+    depends_on: [pgvector, redis]
+    environment:
+      DB_URL: postgresql://ma:ma_pw@pgvector:5432/ma_db
+      REDIS_URL: redis://redis:6379/0
+    command: ["rq","worker","ma-queue"]
+
+  ui:
+    image: ghcr.io/yourorg/ma-ui:latest  # TODO: replace with your image
+    container_name: ma-ui
+    depends_on: [api]
+    environment:
+      API_BASE_URL: http://ma-api:8502
+    ports:
+      - "8501:8501"  # Streamlit default
+
+secrets:
+  admin_token:
+    file: /opt/ma/admin_token
+  github_token:
+    file: /opt/ma/github_token
+
+volumes:
+  pgdata:
+  ollama:

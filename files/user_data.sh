@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+set -eux
+
+# Install docker and compose plugin
+dnf update -y
+dnf install -y docker docker-compose-plugin socat jq
+
+systemctl enable docker
+systemctl start docker
+
+# Create working dir
+mkdir -p /opt/ma
+
+# Pull secrets from SSM (if present)
+REGION="${REGION:-us-east-1}"
+GH_PARAM="/ma/MA_GITHUB_TOKEN"
+ADMIN_PARAM="/ma/MA_ADMIN_TOKEN"
+
+aws ssm get-parameter --name "$GH_PARAM" --with-decryption --region "$REGION" --query "Parameter.Value" --output text > /opt/ma/github_token || true
+aws ssm get-parameter --name "$ADMIN_PARAM" --with-decryption --region "$REGION" --query "Parameter.Value" --output text > /opt/ma/admin_token || true
+
+# Start stack
+docker compose -f /opt/ma/docker-compose.yml up -d
+
+# Simple TCP proxy for ALB health on 8080 -> UI 8501
+cat >/etc/systemd/system/health-proxy.service <<'SVC'
+[Unit]
+Description=Proxy 8080 -> 8501 for ALB health
+After=docker.service
+[Service]
+Type=simple
+ExecStart=/usr/bin/socat TCP-LISTEN:8080,fork,reuseaddr TCP:127.0.0.1:8501
+Restart=always
+[Install]
+WantedBy=multi-user.target
+SVC
+
+systemctl daemon-reload
+systemctl enable --now health-proxy
