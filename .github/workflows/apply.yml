@@ -1,8 +1,5 @@
 name: terraform-apply
 on:
-  # push:
-  #   branches: [ main ]
-  #   paths: ["envs/dev/**","modules/**","files/**",".github/workflows/**"]
   workflow_dispatch: {}
 permissions:
   id-token: write
