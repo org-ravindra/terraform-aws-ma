@@ -1,0 +1,28 @@
+name: terraform-apply
+on:
+  push:
+    branches: [ main ]
+    paths: ["envs/dev/**","modules/**","files/**",".github/workflows/**"]
+  workflow_dispatch: {}
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/ma-tf-gha-role
+          aws-region: us-east-1
+      - name: Terraform Init
+        working-directory: envs/dev
+        run: terraform init -input=false
+      - name: Terraform Apply
+        working-directory: envs/dev
+        env:
+          TF_VAR_github_token: ${{ secrets.MA_GITHUB_TOKEN }}
+          TF_VAR_ma_admin_token: ${{ secrets.MA_ADMIN_TOKEN }}
+        run: terraform apply -auto-approve
