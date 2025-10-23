@@ -34,7 +34,7 @@ If you prefer a different bucket/table/region, edit `envs/dev/backend.tf`.
 ## 2) One-time: Configure GitHub OIDC role in your AWS account
 
 Edit `ci/github-oidc.tf` and replace:
-- `YOUR_AWS_ACCOUNT` → your 12-digit AWS account ID.
+- `${{ vars.AWS_ACCOUNT_ID }}` → your 12-digit AWS account ID.
 
 The GitHub org/user is already set to `ravindrabajpai` and repo filter `repo:ravindrabajpai/terraform-aws-ma:*`.
 
