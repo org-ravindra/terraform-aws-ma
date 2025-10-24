@@ -1,0 +1,51 @@
+name: terraform
+on:
+  workflow_call:
+    inputs:
+      mode:
+        required: true
+        type: string         # "plan" | "apply"
+    secrets:
+      AWS_ROLE_ARN:
+        required: true
+
+jobs:
+  tf:
+    name: Terraform ${{ inputs.mode }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+          audience: sts.amazonaws.com
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./terraform
+
+      - name: Terraform Validate
+        run: terraform validate
+        working-directory: ./terraform
+
+      - name: Terraform Plan
+        if: ${{ inputs.mode == 'plan' }}
+        run: terraform plan -input=false -no-color
+        working-directory: ./terraform
+
+      - name: Terraform Apply
+        if: ${{ inputs.mode == 'apply' }}
+        run: terraform apply -input=false -auto-approve -no-color
+        working-directory: ./terraform
