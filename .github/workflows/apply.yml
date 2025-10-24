@@ -2,6 +2,10 @@ name: apply
 on:
   workflow_dispatch: {}
 
+permissions:
+  id-token: write
+  contents: read
+  
 jobs:
   apply:
     uses: ./.github/workflows/tf-base.yml
