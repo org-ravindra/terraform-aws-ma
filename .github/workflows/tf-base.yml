@@ -52,4 +52,4 @@ jobs:
       - name: Terraform Apply
         if: ${{ inputs.mode == 'apply' }}
         run: terraform apply -input=false -auto-approve -no-color
-        working-directory: .${{ inputs.tf_directory }}
+        working-directory: ${{ inputs.tf_directory }}
