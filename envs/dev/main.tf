@@ -9,22 +9,6 @@ module "vpc" {
   az_count   = 2
 }
 
-module "gha_oidc" {
-  source                = "./modules/gha-oidc"
-  github_owner          = "ravindrabajpai"
-  github_repo           = "terraform-aws-ma"
-  allowed_branches      = ["main"]
-  allow_pull_request    = true
-  permissions_policy_arns = [
-    # For initial bootstrap only; replace with least-privilege policies once your stacks exist
-    # "arn:aws:iam::aws:policy/AdministratorAccess"
-  ]
-  tags = {
-    Project = "terraform-aws-ma"
-    Env     = "dev"
-  }
-}
-
 module "alb" {
   source            = "../../modules/alb"
   name              = "ma"
