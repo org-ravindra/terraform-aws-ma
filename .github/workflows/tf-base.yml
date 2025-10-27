@@ -38,18 +38,18 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        working-directory: ${{ inputs.tf_directory }}
+        working-directory: ${{ inputs.  tf_workdir }}
 
       - name: Terraform Validate
         run: terraform validate
-        working-directory: ${{ inputs.tf_directory }}
+        working-directory: ${{ inputs.  tf_workdir }}
 
       - name: Terraform Plan
         if: ${{ inputs.mode == 'plan' }}
         run: terraform plan -input=false -no-color
-        working-directory: ${{ inputs.tf_directory }}
+        working-directory: ${{ inputs.  tf_workdir }}
 
       - name: Terraform Apply
         if: ${{ inputs.mode == 'apply' }}
         run: terraform apply -input=false -auto-approve -no-color
-        working-directory: ${{ inputs.tf_directory }}
+        working-directory: ${{ inputs.  tf_workdir }}

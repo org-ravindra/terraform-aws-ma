@@ -11,6 +11,6 @@ jobs:
     uses: ./.github/workflows/tf-base.yml
     with:
       mode: plan
-      tf_directory: envs/dev
+      tf_workdir: envs/dev
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
