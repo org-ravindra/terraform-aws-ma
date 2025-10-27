@@ -12,7 +12,7 @@ systemctl start docker
 mkdir -p /opt/ma
 
 # Pull secrets from SSM (if present)
-REGION="${REGION:-us-east-1}"
+REGION="$${REGION:-us-east-1}"
 GH_PARAM="/ma/MA_GITHUB_TOKEN"
 ADMIN_PARAM="/ma/MA_ADMIN_TOKEN"
 

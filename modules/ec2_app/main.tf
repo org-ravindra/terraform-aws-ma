@@ -100,12 +100,10 @@ resource "aws_ssm_document" "push_files" {
 
 resource "aws_ssm_association" "push_files" {
   name   = aws_ssm_document.push_files.name
-  targets = [
-    { 
+  targets {
       key = "InstanceIds"
       values = [aws_instance.app.id] 
     }
-  ]
   wait_for_success_timeout_seconds = 300
 }
 
