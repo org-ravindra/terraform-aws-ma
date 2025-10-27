@@ -66,7 +66,10 @@ resource "aws_instance" "app" {
   iam_instance_profile        = aws_iam_instance_profile.profile.name
   user_data                   = var.user_data
   metadata_options { http_tokens = "required" }
-  root_block_device { volume_size = 60 volume_type = "gp3" }
+  root_block_device { 
+    volume_size = 60 
+    volume_type = "gp3" 
+  }
   tags = merge({ Name = "${var.name}-app" }, var.tags)
 }
 
@@ -97,6 +100,12 @@ resource "aws_ssm_document" "push_files" {
 
 resource "aws_ssm_association" "push_files" {
   name   = aws_ssm_document.push_files.name
-  targets = [{ key = "InstanceIds", values = [aws_instance.app.id] }]
+  targets = [
+    { 
+      key = "InstanceIds"
+      values = [aws_instance.app.id] 
+    }
+  ]
   wait_for_success_timeout_seconds = 300
 }
+
