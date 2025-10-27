@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -eux
 
-# Install docker and compose plugin
+# Install docker and compose plugin (Amazon Linux 2023 / RHEL-family)
 dnf update -y
 dnf install -y docker docker-compose-plugin socat jq
 
@@ -11,16 +11,26 @@ systemctl start docker
 # Create working dir
 mkdir -p /opt/ma
 
-# Pull secrets from SSM (if present)
-REGION="$${REGION:-us-east-1}"
+# Region comes from Terraform templatefile variable injection
+REGION="${REGION}"
+
 GH_PARAM="/ma/MA_GITHUB_TOKEN"
 ADMIN_PARAM="/ma/MA_ADMIN_TOKEN"
 
-aws ssm get-parameter --name "$GH_PARAM" --with-decryption --region "$REGION" --query "Parameter.Value" --output text > /opt/ma/github_token || true
-aws ssm get-parameter --name "$ADMIN_PARAM" --with-decryption --region "$REGION" --query "Parameter.Value" --output text > /opt/ma/admin_token || true
+# Ensure AWS CLI exists (AL2023 usually has it; keep this resilient)
+if ! command -v aws >/dev/null 2>&1; then
+  dnf install -y awscli
+fi
 
-# Start stack
-docker compose -f /opt/ma/docker-compose.yml up -d
+# Pull secrets from SSM (ignore if not present)
+aws ssm get-parameter --name "$GH_PARAM" --with-decryption --region "$REGION" \
+  --query "Parameter.Value" --output text > /opt/ma/github_token || true
+
+aws ssm get-parameter --name "$ADMIN_PARAM" --with-decryption --region "$REGION" \
+  --query "Parameter.Value" --output text > /opt/ma/admin_token || true
+
+# Start stack (expects /opt/ma/docker-compose.yml to be provisioned separately)
+docker compose -f /opt/ma/docker-compose.yml up -d || true
 
 # Simple TCP proxy for ALB health on 8080 -> UI 8501
 cat >/etc/systemd/system/health-proxy.service <<'SVC'
