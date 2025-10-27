@@ -11,10 +11,17 @@ variable "tags" { type = map(string) }
 
 data "aws_iam_policy_document" "assume" {
   statement {
+    effect = "Allow"
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+
     actions = ["sts:AssumeRole"]
-    principals { type = "Service" identifiers = ["ec2.amazonaws.com"] }
   }
 }
+
 
 resource "aws_iam_role" "role" {
   name               = "${var.name}-ec2-role"
