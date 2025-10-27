@@ -5,6 +5,10 @@ on:
       mode:
         required: true
         type: string         # "plan" | "apply"
+      tf_workdir:
+        required: false
+        type: string
+        default: envs/dev
     secrets:
       AWS_ROLE_ARN:
         required: true
