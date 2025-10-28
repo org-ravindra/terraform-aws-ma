@@ -12,7 +12,7 @@ systemctl start docker
 mkdir -p /opt/ma
 
 # Region comes from Terraform templatefile variable injection
-REGION="${REGION}"
+REGION="$${REGION}"
 
 GH_PARAM="/ma/MA_GITHUB_TOKEN"
 ADMIN_PARAM="/ma/MA_ADMIN_TOKEN"
