@@ -38,7 +38,7 @@ resource "aws_security_group" "alb" {
 }
 
 resource "aws_lb" "this" {
-  count              = var.create ? 1 : 0
+  # count              = var.create ? 1 : 0
   name               = "${var.name}-alb"
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]   
@@ -52,7 +52,7 @@ resource "aws_lb" "this" {
 }
 
 resource "aws_lb_target_group" "tg" {
-  count    = var.create ? 1 : 0
+  # count    = var.create ? 1 : 0
   name     = "${var.name}-tg"
   port     = var.target_port
   protocol = "HTTP"
@@ -69,7 +69,7 @@ resource "aws_lb_target_group" "tg" {
 }
 
 resource "aws_lb_listener" "http" {
-  count             = var.create ? 1 : 0
+  # count             = var.create ? 1 : 0
   load_balancer_arn = aws_lb.this.arn
   port              = "80"
   protocol          = "HTTP"
