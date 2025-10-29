@@ -7,13 +7,13 @@ resource "aws_security_group" "alb" {
   name        = "${var.name}-alb-sg"
   description = "ALB SG"
   vpc_id      = var.vpc_id
+
   ingress {
-    description = "HTTP from anywhere"
+    description = "HTTP"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-    # ipv6_cidr_blocks = ["::/0"] # optional
   }
 
   egress {
@@ -22,7 +22,8 @@ resource "aws_security_group" "alb" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  
+
+  # IMPORTANT: tags at create-time (your IAM policy requires these)
   tags = {
     Name    = "${var.name}-alb-sg"
     Project = "ma"
@@ -31,9 +32,9 @@ resource "aws_security_group" "alb" {
 }
 
 resource "aws_lb" "this" {
-  name               = "ma-alb"
+  name               = "${var.name}-alb"
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.app.id]
+  security_groups    = [aws_security_group.alb.id]   
   subnets            = var.public_subnet_ids
 
   tags = {
