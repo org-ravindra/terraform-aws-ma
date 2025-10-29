@@ -14,12 +14,19 @@ variable "github_token" {
   description = "GitHub PAT (optional) to improve clone/rate limits"
   type        = string
   sensitive   = true
-  default     = ""
+  validation {
+    condition     = length(trimspace(var.github_token)) > 0
+    error_message = "github_token must be non-empty."
+  }
 }
 
 variable "ma_admin_token" {
-  description = "Admin token for MA API"
+  description = "Admin token for MA"
   type        = string
   sensitive   = true
-  default     = ""           
+
+  validation {
+    condition     = length(trimspace(var.ma_admin_token)) > 0
+    error_message = "ma_admin_token must be non-empty."
+  }
 }
