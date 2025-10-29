@@ -3,7 +3,7 @@ variable "parameters" { type = map(string) }
 locals {
   non_empty_params = {
     for k, v in var.parameters :
-    k => v if length(trim(v)) > 0
+    k => v if length(trimspace(v)) > 0
   }
 }
 
