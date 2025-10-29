@@ -16,6 +16,9 @@ on:
         required: true
       MA_ADMIN_TOKEN:         
         required: true
+    env:
+      TF_VAR_github_token: ${{ secrets.MA_GITHUB_TOKEN }}
+      TF_VAR_ma_admin_token: ${{ secrets.MA_ADMIN_TOKEN }}
 
 jobs:
   tf:
