@@ -14,4 +14,6 @@ jobs:
       tf_workdir: envs/dev
     secrets:
       AWS_ROLE_ARN: ${{ secrets.AWS_ROLE_ARN }}
+      MA_GITHUB_TOKEN: ${{ secrets.MA_GITHUB_TOKEN }}
+      MA_ADMIN_TOKEN:  ${{ secrets.MA_ADMIN_TOKEN }}
 

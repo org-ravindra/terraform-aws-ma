@@ -12,6 +12,10 @@ on:
     secrets:
       AWS_ROLE_ARN:
         required: true
+      MA_GITHUB_TOKEN:        
+        required: true
+      MA_ADMIN_TOKEN:         
+        required: true
 
 jobs:
   tf:
@@ -42,9 +46,6 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        env:
-          TF_VAR_github_token: ${{ secrets.MA_GITHUB_TOKEN }}
-          TF_VAR_ma_admin_token: ${{ secrets.MA_ADMIN_TOKEN }}
         working-directory: ${{ inputs.tf_workdir }}
 
       - name: Terraform Fmt (write changes)
@@ -53,31 +54,24 @@ jobs:
 
       - name: Terraform Validate
         run: terraform validate
-        env:
-          TF_VAR_github_token: ${{ secrets.MA_GITHUB_TOKEN }}
-          TF_VAR_ma_admin_token: ${{ secrets.MA_ADMIN_TOKEN }}
         working-directory: ${{ inputs.tf_workdir }}
 
+      - name: Check secret presence (safe)
+        run: |
+          echo "github_token length: ${#TF_VAR_github_token}"
+          echo "ma_admin_token length: ${#TF_VAR_ma_admin_token}"
+          
       - name: Terraform Plan
         if: ${{ inputs.mode == 'plan' }}
-        env:
-          TF_VAR_github_token: ${{ secrets.MA_GITHUB_TOKEN }}
-          TF_VAR_ma_admin_token: ${{ secrets.MA_ADMIN_TOKEN }}
         run: terraform plan -input=false -no-color
         working-directory: ${{ inputs.tf_workdir }}
 
       - name: Terraform Apply
         if: ${{ inputs.mode == 'apply' }}
-        env:
-          TF_VAR_github_token: ${{ secrets.MA_GITHUB_TOKEN }}
-          TF_VAR_ma_admin_token: ${{ secrets.MA_ADMIN_TOKEN }}
         run: terraform apply -input=false -auto-approve -no-color
         working-directory: ${{ inputs.tf_workdir }}
 
       - name: Terraform Destroy
         if: ${{ inputs.mode == 'destroy' }}
-        env:
-          TF_VAR_github_token: ${{ secrets.MA_GITHUB_TOKEN }}
-          TF_VAR_ma_admin_token: ${{ secrets.MA_ADMIN_TOKEN }}
         run: terraform destroy -auto-approve
         working-directory: ${{ inputs.tf_workdir }}
