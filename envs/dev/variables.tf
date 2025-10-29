@@ -35,3 +35,8 @@ variable "create" {
   type    = bool
   default = true
 }
+
+variable "enable_alb" {
+  type    = bool
+  default = true
+}

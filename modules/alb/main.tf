@@ -3,6 +3,12 @@ variable "vpc_id" {}
 variable "public_subnet_ids" { type = list(string) }
 variable "target_port" {}
 
+variable "create" {
+  type    = bool
+  default = true
+  description = "Whether to create the ALB resources"
+}
+
 resource "aws_security_group" "alb" {
   name        = "${var.name}-alb-sg"
   description = "ALB SG"
@@ -46,6 +52,7 @@ resource "aws_lb" "this" {
 }
 
 resource "aws_lb_target_group" "tg" {
+  count    = var.create ? 1 : 0
   name     = "${var.name}-tg"
   port     = var.target_port
   protocol = "HTTP"
@@ -62,6 +69,7 @@ resource "aws_lb_target_group" "tg" {
 }
 
 resource "aws_lb_listener" "http" {
+  count             = var.create ? 1 : 0
   load_balancer_arn = aws_lb.this.arn
   port              = "80"
   protocol          = "HTTP"
