@@ -3,7 +3,7 @@ variable "alb_sg_id" {}
 
 resource "aws_security_group" "app" {
   name        = "ma-app-sg"
-  description = "Allow ALB -> app:8080"
+  description = "Allow ALB - app:8080"
   vpc_id      = var.vpc_id
 
   ingress {
