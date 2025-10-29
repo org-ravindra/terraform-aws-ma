@@ -79,6 +79,6 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-output "tg_arn"    { value = aws_lb_target_group.tg.arn }
-output "alb_dns"   { value = aws_lb.this.dns_name }
+output "tg_arn"    { value = length(aws_lb_target_group.this) > 0 ? aws_lb_target_group.this[0].arn : null }
+output "alb_dns"   { value = length(aws_lb.this) > 0 ? aws_lb.this[0].dns_name : null }
 output "alb_sg_id" { value = aws_security_group.alb.id }
