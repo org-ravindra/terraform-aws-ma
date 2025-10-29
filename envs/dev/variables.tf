@@ -30,3 +30,8 @@ variable "ma_admin_token" {
     error_message = "ma_admin_token must be non-empty."
   }
 }
+
+variable "create" {
+  type    = bool
+  default = true
+}

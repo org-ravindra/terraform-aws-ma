@@ -32,6 +32,7 @@ resource "aws_security_group" "alb" {
 }
 
 resource "aws_lb" "this" {
+  count              = var.create ? 1 : 0
   name               = "${var.name}-alb"
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb.id]   
