@@ -22,14 +22,25 @@ resource "aws_security_group" "alb" {
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
-  tags = { Name = "${var.name}-alb-sg" }
+  
+  tags = {
+    Name    = "${var.name}-alb-sg"
+    Project = "ma"
+    Env     = "dev"
+  }
 }
 
 resource "aws_lb" "this" {
-  name               = "${var.name}-alb"
+  name               = "ma-alb"
   load_balancer_type = "application"
+  security_groups    = [aws_security_group.app.id]
   subnets            = var.public_subnet_ids
-  security_groups    = [aws_security_group.alb.id]
+
+  tags = {
+    Name    = "${var.name}-alb"
+    Project = "ma"
+    Env     = "dev"
+  }
 }
 
 resource "aws_lb_target_group" "tg" {
@@ -40,6 +51,11 @@ resource "aws_lb_target_group" "tg" {
   health_check {
     path    = "/health"
     matcher = "200-399"
+  }
+  tags = {
+    Name    = "${var.name}-tg"
+    Project = "ma"
+    Env     = "dev"
   }
 }
 

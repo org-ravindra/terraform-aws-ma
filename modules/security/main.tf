@@ -21,7 +21,11 @@ resource "aws_security_group" "app" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  tags = { Name = "ma-app-sg" }
+  tags = {
+    Name    = "ma-app-sg"  
+    Project = "ma"
+    Env     = "dev"
+  }
 }
 
 output "app_sg_id" { value = aws_security_group.app.id }
