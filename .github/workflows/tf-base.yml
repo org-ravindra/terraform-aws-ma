@@ -66,15 +66,15 @@ jobs:
           
       - name: Terraform Plan
         if: ${{ inputs.mode == 'plan' }}
-        run: terraform plan -input=false -var-file="envs/dev/dev.tfvars" -no-color 
+        run: terraform plan -input=false -var-file="dev.tfvars" -no-color 
         working-directory: ${{ inputs.tf_workdir }}
 
       - name: Terraform Apply
         if: ${{ inputs.mode == 'apply' }}
-        run: terraform apply -input=false -auto-approve -var-file="envs/dev/dev.tfvars" -no-color 
+        run: terraform apply -input=false -auto-approve -var-file="dev.tfvars" -no-color 
         working-directory: ${{ inputs.tf_workdir }}
 
       - name: Terraform Destroy
         if: ${{ inputs.mode == 'destroy' }}
-        run: terraform destroy -auto-approve -var-file="envs/dev/dev.tfvars" 
+        run: terraform destroy -auto-approve -var-file="dev.tfvars" 
         working-directory: ${{ inputs.tf_workdir }}
