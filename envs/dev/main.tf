@@ -9,6 +9,7 @@ module "vpc" {
   az_count   = 2
 }
 
+
 module "alb" {
   source            = "../../modules/alb"
   name              = "ma"
@@ -25,11 +26,14 @@ module "security" {
 
 module "ssm" {
   source = "../../modules/ssm"
+
   parameters = {
-    "MA_GITHUB_TOKEN" = var.github_token
-    "MA_ADMIN_TOKEN"  = var.ma_admin_token
+    MA_ADMIN_TOKEN  = var.ma_admin_token
+    MA_GITHUB_TOKEN = var.github_token
   }
 }
+
+
 
 module "ec2_app" {
   source        = "../../modules/ec2_app"
