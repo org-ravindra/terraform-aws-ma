@@ -33,10 +33,10 @@ variable "ma_admin_token" {
 
 variable "create" {
   type    = bool
-  default = true
+  default = false
 }
 
 variable "enable_alb" {
   type    = bool
-  default = true
+  default = false
 }
