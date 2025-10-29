@@ -1,16 +1,14 @@
 variable "parameters" { type = map(string) }
 
-variable "ma_admin_token" {
-  type        = string
-  sensitive   = true
-  validation {
-    condition     = length(trim(var.ma_admin_token)) > 0
-    error_message = "ma_admin_token must be non-empty."
+locals {
+  non_empty_params = {
+    for k, v in var.parameters :
+    k => v if length(trim(v)) > 0
   }
 }
 
 resource "aws_ssm_parameter" "params" {
-  for_each  = var.parameters
+  for_each  = local.non_empty_params
   name      = "/ma/${each.key}"
   type      = "SecureString"
   value     = each.value

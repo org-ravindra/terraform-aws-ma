@@ -21,4 +21,5 @@ variable "ma_admin_token" {
   description = "Admin token for MA API"
   type        = string
   sensitive   = true
+  default     = ""           
 }
