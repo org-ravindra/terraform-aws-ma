@@ -8,7 +8,7 @@
 				"s3:ListBucket",
 				"s3:ListBucketVersions"
 			],
-			"Resource": "arn:aws:s3:::ma-tfstate-bucket",
+			"Resource": "arn:aws:s3:::ma-tfstate-bkt",
 			"Condition": {
 				"StringLike": {
 					"s3:prefix": [
@@ -26,7 +26,7 @@
 				"s3:DeleteObject",
 				"s3:GetObjectVersion"
 			],
-			"Resource": "arn:aws:s3:::ma-tfstate-bucket/envs/dev/*"
+			"Resource": "arn:aws:s3:::ma-tfstate-bkt/envs/dev/*"
 		},
 		{
 			"Sid": "DDBStateLock",
