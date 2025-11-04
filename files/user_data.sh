@@ -2,14 +2,27 @@
 set -eux
 
 # Install docker and compose plugin (Amazon Linux 2023 / RHEL-family)
-dnf update -y
-dnf install -y docker docker-compose-plugin socat jq
+sudo dnf update -y
+sudo dnf install -y docker
 
-systemctl enable docker
-systemctl start docker
+sudo systemctl enable --now docker
+sudo usermod -aG docker ec2-user
+newgrp docker
+
+
+sudo mkdir -p /usr/lib/docker/cli-plugins
+sudo curl -SL https://github.com/docker/compose/releases/download/v2.29.7/docker-compose-linux-x86_64 \
+  -o /usr/lib/docker/cli-plugins/docker-compose
+sudo chmod +x /usr/lib/docker/cli-plugins/docker-compose
+
+
+sudo dnf install -y socat jq
+
+sudo systemctl enable docker
+sudo systemctl start docker
 
 # Create working dir
-mkdir -p /opt/ma
+sudo mkdir -p /opt/ma
 
 # Region comes from Terraform templatefile variable injection
 REGION="$${REGION}"
